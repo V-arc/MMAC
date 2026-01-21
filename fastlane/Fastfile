@@ -65,7 +65,7 @@ def build_and_zip(tag_prefix, is_beta, is_local)
     workspace: "auto-clicker.xcworkspace",
     clean: true,
     output_directory: "build",
-    output_name: "AutoClicker",
+    output_name: "MMAC",
     export_method: "mac-application"
   )
 
@@ -99,11 +99,12 @@ def build_and_zip(tag_prefix, is_beta, is_local)
 
     # http://docs.fastlane.tools/plugins/available-plugins/#semantic_release
     # https://github.com/xotahal/fastlane-plugin-semantic_release
+    repo = ENV["GITHUB_REPOSITORY"] || "V-arc/MMAC"
     notes = conventional_changelog(
       format: 'markdown',
-      title: 'macOS Auto Clicker',
+      title: 'MMAC',
       display_title: false,
-      commit_url: 'https://github.com/othyn/macos-auto-clicker/commit',
+      commit_url: "https://github.com/#{repo}/commit",
       sections: {
         feat: ":star2: Features",
         fix: ":bug: Bug Fixes",
@@ -119,15 +120,15 @@ def build_and_zip(tag_prefix, is_beta, is_local)
 
   # https://docs.fastlane.tools/actions/zip
   output_archive_path = zip(
-    path: "build/AutoClicker.app",
-    output_path: "build/AutoClicker.zip",
+    path: "build/MMAC.app",
+    output_path: "build/MMAC.zip",
     verbose: true
   )
 
   # https://docs.fastlane.tools/actions/set_github_release/#set_github_release
   unless is_local
     set_github_release(
-      repository_name: "othyn/macos-auto-clicker",
+      repository_name: ENV["GITHUB_REPOSITORY"] || "V-arc/MMAC",
       api_bearer: ENV["GITHUB_TOKEN"],
       name: "#{tag_prefix} #{lane_context[SharedValues::RELEASE_NEXT_VERSION]}#{is_beta ? " (#{lane_context[SharedValues::RELEASE_LAST_TAG_HASH]})" : ""}",
       tag_name: "#{is_beta ? "beta/" : ""}v#{lane_context[SharedValues::RELEASE_NEXT_VERSION]}#{is_beta ? "/#{lane_context[SharedValues::RELEASE_LAST_TAG_HASH]}" : ""}",
@@ -136,7 +137,7 @@ def build_and_zip(tag_prefix, is_beta, is_local)
       commitish: "main",
       upload_assets: [
         output_archive_path,
-        "build/AutoClicker.app.dSYM.zip"
+        "build/MMAC.app.dSYM.zip"
       ]
     )
   end
